@@ -1,6 +1,6 @@
 # lenses-ansible
 
-Installas Lenses Dashboard on your VM
+Installs Lenses Dashboard on your VM
 
 ## Requirements
 
