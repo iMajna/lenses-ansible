@@ -1,0 +1,22 @@
+KafkaClient {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  keyTab="{{ jaas_kafka_client.keytab_path }}"
+  storeKey=true
+  useTicketCache=false
+  serviceName="{{ jaas_kafka_client.service_name }}"
+  principal="{{ jaas_kafka_client.principal_name }}";
+};
+
+/*
+  Optional section for authentication to zookeeper
+  Please also remember to set lenses.zookeeper.security.enabled=true
+*/
+Client {
+  com.sun.security.auth.module.Krb5LoginModule required
+   useKeyTab=true
+   keyTab="{{ jaas_client.keytab_path }}"
+   storeKey=true
+   useTicketCache=false
+   principal="{{ jaas_client.principal_name }}";
+};

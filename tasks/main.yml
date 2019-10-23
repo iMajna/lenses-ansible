@@ -1,0 +1,124 @@
+- name: Lenses | Download and unarchive file
+  unarchive:
+    src: "{{ lenses.trial_download_url if lenses.trial else lenses.download_url }}"
+    dest: "{{ lenses.home }}"
+    remote_src: yes
+
+- name: Lenses | Create group
+  group:
+    name: "{{ service.group }}"
+
+- name: Lenses | Create user
+  user:
+    name: "{{ service.user }}"
+    comment: "Lenses User"
+    system: yes
+    createhome: "{{ lenses.create_home }}"
+    group: "{{ service.group }}"
+
+- name: Lenses | Ensure Lenses configuration directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+  when: item | length > 0
+  with_items:
+    - "{{ lenses.home }}"
+    - "{{ lenses_conf['lenses.storage.directory'] | replace('\"','') }}"
+    - "{{ lenses_conf['lenses.sql.state.dir'] | replace('\"','') }}"
+    - "{{ lenses_conf['lenses.kubernetes.config.file'] | replace('\"','') }}"
+
+- name: Lenses | Create directory for custom licenses
+  file:
+    path: "{{ lenses.home }}/lenses/lenses-licenses"
+    state: directory
+  when: lenses.trial|default(False) == False
+
+- name: Lenses | Add owenership for  KafkaClient keytab
+  copy:
+    path: "{{ jaas_kafka_client.keytab_path }}"
+    mode: 0600
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+  when: security_protocol == 'sasl_ssl' or security_protocol == "sasl_plaintext"
+  notify:
+    - restart lenses
+
+- name: Lenses | Add owenership for Client keytab
+  copy:
+    path: "{{ jaas_client.keytab_path }}"
+    mode: 0600
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+  when: (security_protocol == 'sasl_ssl' or security_protocol == "sasl_plaintext") and jaas_kafka_client.keytab_path != jaas_client.keytab_path
+  notify:
+    - restart lenses
+
+- name: Lenses | Generate Config File
+  template:
+    src: lenses.conf.j2
+    dest: "{{ lenses.config_file }}"
+    mode: 0640
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+  notify:
+    - restart lenses
+
+- name: Lenses | Generate License File
+  template:
+    src: enterprise-license.json
+    dest: "{{ lenses_conf['lenses.license.file'] | replace('\"','') }}"
+    mode: 0640
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+  when: lenses.trial|default(False) == False
+
+- name: Lenses | Generate Security Config File
+  template:
+    src: security.conf.j2
+    dest: "{{ lenses.security_config_file }}"
+    mode: 0640
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+  notify:
+    - restart lenses
+
+- name: Lenses | Create Jaas Config File
+  template:
+    src: lenses_jaas.conf.j2
+    dest: "{{ service.lenses_jaas }}"
+    mode: 0640
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+  when: security_protocol == 'sasl_ssl' or security_protocol == "sasl_plaintext"
+  
+- name: Lenses | Move License file to right Lenses directory
+  template:
+    src:  "{{ lenses_conf['lenses.license.file'].split(\"/\")[-1] | replace('\"','') }}"
+    dest: "{{ lenses.home }}/lenses/lenses-licenses"
+    owner: lenses
+    group: lenses
+    mode: 0640
+  when: lenses.trial|default(False) == False
+  notify:
+    - restart lenses
+
+- name: Lenses | Create Unit File
+  template: 
+    src=lenses.service.j2
+    dest={{ service.systemd_file_path }}/{{ service.systemd_service_name }}
+    mode=0644
+  notify:
+    - reload systemd
+
+- name: Lenses | Start Service
+  service:
+    name: "{{ service.systemd_service_name }}"
+    enabled: "{{ service.enabled }}"
+    state: "{{ service.state }}"
+
+- name: Lenses | Wait for Start
+  wait_for:
+     host: "{{ lenses_conf['lenses.ip'] }}"
+     port: "{{ lenses_conf['lenses.port'] }}"

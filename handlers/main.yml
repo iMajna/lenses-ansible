@@ -1,0 +1,6 @@
+- name: reload systemd
+  command: systemctl daemon-reload
+- name: restart lenses
+  systemd:
+    name: "{{ service.systemd_service_name }}"
+    state: restarted

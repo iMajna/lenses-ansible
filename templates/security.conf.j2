@@ -1,0 +1,17 @@
+{% if lenses_version[0] | int >= 3 %} 
+{% for key, value in security_conf.admin.items() %}
+{{key}}={{value}}
+{% endfor %}
+{% endif  %}
+
+{% if lenses_version[0] | int < 3 and security_conf.mode == "BASIC" and security_conf | length > 0 %}
+{% for key, value in security_conf.basic.items() %}
+{{key}}={{value}}
+{% endfor %}
+{% endif  %}
+
+{% if  security_conf.mode == "LDAP" %}
+{% for key, value in security_conf.ldap.items() %}
+{{key}}={{value}}
+{% endfor %}
+{% endif  %}

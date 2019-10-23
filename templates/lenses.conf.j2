@@ -1,0 +1,47 @@
+{% for key, value in lenses_conf.items() %}
+{{key}}={{value}}
+{% endfor %}
+
+{% if security_protocol == 'SSL_AUTH' %}
+{% for key, value in ssl_auth.items() %}
+{{key}}={{value}}
+{% endfor %}
+{% endif %}
+
+{% if security_protocol == 'SSL_ENCRYPT' %}
+{% for key, value in ssl_encrypt.items() %}
+{{key}}={{value}}
+{% endfor %}
+{% endif %}
+
+{% if security_protocol == 'SASL_PLAINTEXT' %}
+lenses.zookeeper.security.enabled = true
+lenses.kafka.settings.consumer.security.protocol = SASL_PLAINTEXT
+lenses.kafka.settings.producer.security.protocol = SASL_PLAINTEXT
+
+{% for key, value in sasl_plaintext.items() %}
+{{key}}={{value}}
+{% endfor %}
+{% endif %}
+
+{% if security_protocol == 'SASL_SSL' %}
+{% for key, value in sasl_ssl.items() %}
+{{key}}={{value}}
+{% endfor %}
+{% endif %}
+
+{% if security_protocol == 'SASL_SCRAM' %}
+lenses.kafka.settings.consumer.security.protocol = SASL_PLAINTEXT
+lenses.kafka.settings.consumer.sasl.mechanism = SCRAM-SHA-256
+
+lenses.kafka.settings.producer.security.protocol = SASL_PLAINTEXT
+lenses.kafka.settings.producer.sasl.mechanism =  SCRAM-SHA-256
+lenses.kafka.settings.consumer.sasl.jaas.config = """
+  org.apache.kafka.common.security.scram.ScramLoginModule required
+    username="{{ sasl_scram.username }}"
+    password="{{ sasl_scram.password }}";"""
+lenses.kafka.settings.producer.sasl.jaas.config = """
+  org.apache.kafka.common.security.scram.ScramLoginModule required
+    username="[{ sasl_scram.username }}"
+    password="{{ sasl_scram.password }}";"""
+{% endif %}

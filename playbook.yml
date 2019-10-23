@@ -1,0 +1,9 @@
+- name: Deploy Lenses Dashboard
+  hosts: 127.0.0.1
+  connection: local
+  vars:
+    security_type: sasl_gssapi
+    lenses_version: 2.3.1
+  become: yes
+  roles:
+    - ansible-lenses

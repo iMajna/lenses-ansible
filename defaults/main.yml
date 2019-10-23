@@ -1,0 +1,118 @@
+# PLAINTEXT/SSL_AUTH/SSL_ENCRYPT/SASL_PLAINTEXT/SASL_SCRAM
+security_protocol: "PLAINTEXT" 
+
+service: 
+  systemd_service_name: "lenses.service"
+  systemd_file_path: "/usr/lib/systemd/system"
+  user: "lenses"
+  group: "lenses"
+  lenses_jaas: "/etc/lenses_jaas.conf"
+  enabled: true
+  state: started
+  home_dir: "/opt"
+
+##
+# trial: yes -> if you have your own downloaded Lenses.tar, otherwise "no" and left url as is 
+##
+lenses:
+  home: "/opt"
+  opts: "-Djava.security.auth.login.config={{ service.lenses_jaas }}"
+  trial: no
+  trial_download_url: "/url/to/download/your/lenses/with/trial/license"
+  download_url: "https://archive.lenses.io/lenses/{{ lenses_version[:-2] }}/lenses-{{ lenses_version }}-linux64.tar.gz"
+  security_config_file: "{{ service.home_dir }}/lenses/security.conf"
+  config_file: "{{ service.home_dir }}/lenses/lenses.conf"
+  create_home: no
+
+jaas_kafka_client:
+  keytab_path: '""'
+  principal_name: '""'
+  service_name: '""'  
+jaas_client:
+  keytab_path: '""'
+  principal_name: '""'
+
+lenses_conf:
+  lenses.ip: 0.0.0.0
+  lenses.port: 9991
+  lenses.license.file: '"{{ service.home_dir + "/lenses/license.json" if lenses.trial else service.home_dir + "/lenses/lenses-licenses/enterprise-license.json" }}"'
+  #lenses.license.file: '"{{ service.home_dir }}/lenses/lenses-licenses/enterprise-license.json"'
+  lenses.secret.file: '"{{ service.home_dir }}/lenses/security.conf"'
+  lenses.kafka.brokers: '"PLAINTEXT://localhost:9092"'
+  lenses.sql.state.dir : '"/logs/lenses-sql-kstream-state"'
+  lenses.zookeeper.hosts: '[{url:"localhost:2181"}]'
+  lenses.storage.directory: '"/storage"'
+  lenses.kubernetes.config.file: '""'
+
+##
+# mode: BASIC | LDAP
+##
+security_conf:
+  mode: "BASIC"
+  admin: 
+    lenses.security.user: '"admin"'
+    lenses.security.password: '"sha256:8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"'
+  basic:  
+    lenses.security.mode: '"BASIC"'
+    lenses.security.users: '[{"username": "admin", "password": "admin", "displayname": "Administrator", "groups": ["adminGroup"]},
+                           {"username": "read", "password": "read", "displayname": "Reader", "groups": ["readGroup"]}]'
+    lenses.security.groups: '[{ "name": "adminGroup", "roles": ["Admin", "AlertsWrite", "TableStorageWrite", "DataPolicyWrite"]},
+                          { "name": "readGroup", "roles": ["Read", "AlertsRead", "TableStorageRead"], "topic": {"blacklist": ["payments.*"]}}]'
+  ldap:
+    lenses.security.mode: '"LDAP"'
+    lenses.security.ldap.url: '"ldaps://example.com:636"'
+    lenses.security.ldap.user: '"cn=lenses,ou=Services,dc=example,dc=com"'
+    lenses.security.ldap.password: '"[PASSWORD]"'
+    lenses.security.ldap.base: '"ou=Users,dc=example,dc=com"'
+    lenses.security.ldap.filter: '"(&(objectClass=person)(sAMAccountName=<user>))"'
+    lenses.security.ldap.plugin.class: '"com.landoop.lenses.security.ldap.LdapMemberOfUserGroupPlugin"'
+    lenses.security.ldap.plugin.group.extract.regex: '"(?i)CN=(\\w+),ou=Groups.*"'
+    lenses.security.ldap.plugin.memberof.key: '"memberOf"'
+    lenses.security.ldap.plugin.person.name.key: '"sn"'
+    lenses.security.groups: '[{"name": "LensesAdmin", "roles": ["Admin"]}]'
+
+ssl_auth:
+  lenses.kafka.settings.consumer.security.protocol: SSL
+  lenses.kafka.settings.consumer.ssl.truststore.location: "/var/private/ssl/client.truststore.jks"
+  lenses.kafka.settings.consumer.ssl.truststore.password: "changeit"
+  lenses.kafka.settings.consumer.ssl.keystore.location: "/var/private/ssl/client.keystore.jks"
+  lenses.kafka.settings.consumer.ssl.keystore.password: "changeit"
+  lenses.kafka.settings.consumer.ssl.key.password: "changeit"
+
+  lenses.kafka.settings.producer.security.protocol: SSL
+  lenses.kafka.settings.producer.ssl.truststore.location: "/var/private/ssl/client.truststore.jks"
+  lenses.kafka.settings.producer.ssl.truststore.password: "changeit"
+  lenses.kafka.settings.producer.ssl.keystore.location: "/var/private/ssl/client.keystore.jks"
+  lenses.kafka.settings.producer.ssl.keystore.password: "changeit"
+  lenses.kafka.settings.producer.ssl.key.password: "changeit"
+
+  lenses.kubernetes.processor.kafka.settings.security.protocol:  SSL
+  lenses.kubernetes.processor.kafka.settings.ssl.truststore.location: "/var/private/ssl/client.truststore.jks"
+  lenses.kubernetes.processor.kafka.settings.ssl.truststore.password: "changeit"
+  lenses.kubernetes.processor.kafka.settings.ssl.keystore.location: "/var/private/ssl/client.keystore.jks"
+  lenses.kubernetes.processor.kafka.settings.ssl.keystore.password: "changeit"
+  lenses.kubernetes.processor.kafka.settings.ssl.key.password: "changeit"
+
+ssl_encrpyt:
+  lenses.kafka.settings.consumer.security.protocol: SSL
+  lenses.kafka.settings.consumer.ssl.truststore.location: "/var/private/ssl/client.truststore.jks"
+  lenses.kafka.settings.consumer.ssl.truststore.password: "changeit"
+
+  lenses.kafka.settings.producer.security.protocol: SSL
+  lenses.kafka.settings.producer.ssl.truststore.location: "/var/private/ssl/client.truststore.jks"
+  lenses.kafka.settings.producer.ssl.truststore.password: "changeit"
+
+  lenses.kubernetes.processor.kafka.settings.security.protocol: SSL
+  lenses.kubernetes.processor.kafka.settings.ssl.truststore.location: "/var/private/ssl/client.truststore.jks"
+  lenses.kubernetes.processor.kafka.settings.ssl.truststore.password: "changeit"
+
+sasl_scram:
+  username: ''
+  password: ''
+
+sasl_plaintext:
+  k8:
+    lenses.kubernetes.processor.jaas: '""'
+    lenses.kubernetes.processor.kafka.settings.keytab: '""'
+    lenses.kubernetes.processor.krb5: '""'
+    lenses.kubernetes.processor.kafka.settings.security.protocol: SASL_PLAINTEXT
