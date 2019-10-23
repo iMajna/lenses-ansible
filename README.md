@@ -32,6 +32,14 @@ At the moment only LDAP and Basic security mode is supported. Change var to "BAS
 
 If you bought a license use [ansible-vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) to make little bit more secure. 
 
+## TODO:
+
+- [] add ssl_auth support 
+- [] add ssl_encrypt support
+- [] add sasl_ssl support
+
+
+
 ## Author Information
 
 This playbook was created in 2019 by [iMajna](https://github.com/iMajna)

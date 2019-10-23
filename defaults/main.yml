@@ -80,7 +80,7 @@ ssl_auth:
   lenses.kafka.settings.consumer.ssl.key.password: '"changeit"'
 
   lenses.kafka.settings.producer.security.protocol: SSL
-  lenses.kafka.settings.producer.ssl.truststore.location:'""'
+  lenses.kafka.settings.producer.ssl.truststore.location: '""'
   lenses.kafka.settings.producer.ssl.truststore.password: '"changeit"'
   lenses.kafka.settings.producer.ssl.keystore.location: '""'
   lenses.kafka.settings.producer.ssl.keystore.password: '"changeit"'
