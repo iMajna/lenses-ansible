@@ -97,8 +97,8 @@
   template:
     src:  "{{ lenses_conf['lenses.license.file'].split(\"/\")[-1] | replace('\"','') }}"
     dest: "{{ lenses.home }}/lenses/lenses-licenses"
-    owner: lenses
-    group: lenses
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
     mode: 0640
   when: lenses.trial|default(False) == False
   notify:
@@ -106,9 +106,11 @@
 
 - name: Lenses | Create Unit File
   template: 
-    src=lenses.service.j2
-    dest={{ service.systemd_file_path }}/{{ service.systemd_service_name }}
-    mode=0644
+    src: lenses.service.j2
+    dest: "{{ service.systemd_file_path }}/{{ service.systemd_service_name }}"
+    owner: "{{ service.user }}"
+    group: "{{ service.group }}"
+    mode: 0644
   notify:
     - reload systemd
 

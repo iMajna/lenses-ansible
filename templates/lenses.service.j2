@@ -6,7 +6,7 @@ After=network.target remote-fs.target
 
 [Service]
 {% if lenses.lenses_jaas is defined %}
-Environment=LENSES_OPTS={{ lenses.opts }}
+Environment="LENSES_OPTS={{ lenses.opts }}"
 {% endif %}
 ExecStart={{ lenses.home }}/lenses/bin/lenses
 User={{ service.user }}

@@ -25,12 +25,12 @@ lenses:
   create_home: no
 
 jaas_kafka_client:
-  keytab_path: '""'
-  principal_name: '""'
-  service_name: '""'  
+  keytab_path: ""
+  principal_name: ""
+  service_name: ""  
 jaas_client:
-  keytab_path: '""'
-  principal_name: '""'
+  keytab_path: ""
+  principal_name: ""
 
 lenses_conf:
   lenses.ip: 0.0.0.0
@@ -112,7 +112,7 @@ sasl_scram:
 
 sasl_plaintext:
   k8:
-    lenses.kubernetes.processor.jaas: '""'
-    lenses.kubernetes.processor.kafka.settings.keytab: '""'
-    lenses.kubernetes.processor.krb5: '""'
+    lenses.kubernetes.processor.jaas: ""
+    lenses.kubernetes.processor.kafka.settings.keytab: ""
+    lenses.kubernetes.processor.krb5: ""
     lenses.kubernetes.processor.kafka.settings.security.protocol: SASL_PLAINTEXT
