@@ -10,6 +10,10 @@ service:
   enabled: true
   state: started
   home_dir: "/opt"
+  restart: "always"
+  standard_output: "syslog"
+  standard_error: "syslog"
+  syslog_identifier: "lenses"
 
 ##
 # trial: yes -> if you have your own downloaded Lenses.tar, otherwise "no" and left url as is 
@@ -36,7 +40,6 @@ lenses_conf:
   lenses.ip: 0.0.0.0
   lenses.port: 9991
   lenses.license.file: '"{{ service.home_dir + "/lenses/license.json" if lenses.trial else service.home_dir + "/lenses/lenses-licenses/enterprise-license.json" }}"'
-  #lenses.license.file: '"{{ service.home_dir }}/lenses/lenses-licenses/enterprise-license.json"'
   lenses.secret.file: '"{{ service.home_dir }}/lenses/security.conf"'
   lenses.kafka.brokers: '"PLAINTEXT://localhost:9092"'
   lenses.sql.state.dir : '"/logs/lenses-sql-kstream-state"'
@@ -112,7 +115,7 @@ sasl_scram:
 
 sasl_plaintext:
   k8:
-    lenses.kubernetes.processor.jaas: ""
-    lenses.kubernetes.processor.kafka.settings.keytab: ""
-    lenses.kubernetes.processor.krb5: ""
+    lenses.kubernetes.processor.jaas: '""'
+    lenses.kubernetes.processor.kafka.settings.keytab: '""'
+    lenses.kubernetes.processor.krb5: '""'
     lenses.kubernetes.processor.kafka.settings.security.protocol: SASL_PLAINTEXT

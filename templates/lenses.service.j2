@@ -1,14 +1,18 @@
 [Unit]
 Description=Lenses Dashboard
 Documentation=https://docs.lenses.io/install_setup/configuration/lenses-config.html#introduction
-Requires=network.target remote-fs.target
-After=network.target remote-fs.target
 
 [Service]
 {% if lenses.lenses_jaas is defined %}
 Environment="LENSES_OPTS={{ lenses.opts }}"
 {% endif %}
 ExecStart={{ lenses.home }}/lenses/bin/lenses
+Restart={{ service.restart }}
+
+StandardOutput={{ service.standard_output }}
+StandardError={{ service.standard_error }} 
+SyslogIdentifier={{ service.syslog_identifier }}
+
 User={{ service.user }}
 Group={{ service.group }}
 
