@@ -38,20 +38,20 @@
 - name: Lenses | Add owenership for  KafkaClient keytab
   copy:
     path: "{{ jaas_kafka_client.keytab_path }}"
-    mode: 0600
+    mode: 0400
     owner: "{{ service.user }}"
     group: "{{ service.group }}"
-  when: security_protocol == 'sasl_ssl' or security_protocol == "sasl_plaintext"
+  when: security_protocol == "sasl_plaintext"
   notify:
     - restart lenses
 
 - name: Lenses | Add owenership for Client keytab
   copy:
     path: "{{ jaas_client.keytab_path }}"
-    mode: 0600
+    mode: 0400
     owner: "{{ service.user }}"
     group: "{{ service.group }}"
-  when: (security_protocol == 'sasl_ssl' or security_protocol == "sasl_plaintext") and jaas_kafka_client.keytab_path != jaas_client.keytab_path
+  when: (security_protocol == "sasl_plaintext") and jaas_kafka_client.keytab_path != jaas_client.keytab_path
   notify:
     - restart lenses
 
@@ -91,7 +91,7 @@
     mode: 0640
     owner: "{{ service.user }}"
     group: "{{ service.group }}"
-  when: security_protocol == 'sasl_ssl' or security_protocol == "sasl_plaintext"
+  when: security_protocol == "sasl_plaintext"
   
 - name: Lenses | Move License file to right Lenses directory
   template:

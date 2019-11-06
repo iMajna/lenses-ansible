@@ -74,41 +74,6 @@ security_conf:
     lenses.security.ldap.plugin.person.name.key: '"sn"'
     lenses.security.groups: '[{"name": "LensesAdmin", "roles": ["Admin"]}]'
 
-ssl_auth:
-  lenses.kafka.settings.consumer.security.protocol: SSL
-  lenses.kafka.settings.consumer.ssl.truststore.location: '""'
-  lenses.kafka.settings.consumer.ssl.truststore.password: '"changeit"'
-  lenses.kafka.settings.consumer.ssl.keystore.location: '""'
-  lenses.kafka.settings.consumer.ssl.keystore.password: '"changeit"'
-  lenses.kafka.settings.consumer.ssl.key.password: '"changeit"'
-
-  lenses.kafka.settings.producer.security.protocol: SSL
-  lenses.kafka.settings.producer.ssl.truststore.location: '""'
-  lenses.kafka.settings.producer.ssl.truststore.password: '"changeit"'
-  lenses.kafka.settings.producer.ssl.keystore.location: '""'
-  lenses.kafka.settings.producer.ssl.keystore.password: '"changeit"'
-  lenses.kafka.settings.producer.ssl.key.password: '"changeit"'
-
-  lenses.kubernetes.processor.kafka.settings.security.protocol:  SSL
-  lenses.kubernetes.processor.kafka.settings.ssl.truststore.location: '""'
-  lenses.kubernetes.processor.kafka.settings.ssl.truststore.password: '"changeit"'
-  lenses.kubernetes.processor.kafka.settings.ssl.keystore.location: '""'
-  lenses.kubernetes.processor.kafka.settings.ssl.keystore.password: '"changeit"'
-  lenses.kubernetes.processor.kafka.settings.ssl.key.password: '"changeit"'
-
-ssl_encrpyt:
-  lenses.kafka.settings.consumer.security.protocol: SSL
-  lenses.kafka.settings.consumer.ssl.truststore.location: '""'
-  lenses.kafka.settings.consumer.ssl.truststore.password: '"changeit"'
-
-  lenses.kafka.settings.producer.security.protocol: SSL
-  lenses.kafka.settings.producer.ssl.truststore.location: '""'
-  lenses.kafka.settings.producer.ssl.truststore.password: '"changeit"'
-
-  lenses.kubernetes.processor.kafka.settings.security.protocol: SSL
-  lenses.kubernetes.processor.kafka.settings.ssl.truststore.location: '""'
-  lenses.kubernetes.processor.kafka.settings.ssl.truststore.password: '"changeit"'
-
 sasl_scram:
   username: '""'
   password: '""'
